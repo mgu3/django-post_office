@@ -11,7 +11,7 @@ def get_cache_key(name):
     """
     Prefixes and slugify the key name
     """
-    return 'post_office:template:%s' % (slugify(name))
+    return f'post_office:template:{slugify(name)}'
 
 
 def set(name, content):

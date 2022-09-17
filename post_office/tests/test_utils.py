@@ -91,7 +91,7 @@ class UtilsTest(TestCase):
             """Raise exception if real cache usage not equal to desired_cache value
             """
             # to avoid cache cleaning - just create new template
-            name = 'can_i/suport_cache_settings%s' % suffix
+            name = f'can_i/suport_cache_settings{suffix}'
             self.assertRaises(
                 EmailTemplate.DoesNotExist, get_email_template, name
             )
@@ -127,7 +127,7 @@ class UtilsTest(TestCase):
         """
         Check that split emails correctly divide email lists for multiprocessing
         """
-        for i in range(225):
+        for _ in range(225):
             Email.objects.create(from_email='from@example.com', to=['to@example.com'])
         expected_size = [57, 56, 56, 56]
         email_list = split_emails(Email.objects.all(), 4)

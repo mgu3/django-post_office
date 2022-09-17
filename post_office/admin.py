@@ -73,7 +73,7 @@ class CommaSeparatedEmailWidget(TextInput):
             return ''
         if isinstance(value, str):
             value = [value, ]
-        return ','.join([item for item in value])
+        return ','.join(list(value))
 
 
 def requeue(modeladmin, request, queryset):
@@ -124,7 +124,7 @@ class EmailAdmin(admin.ModelAdmin):
 
     def shortened_subject(self, instance):
         if instance.template:
-            template_cache_key = '_subject_template_' + str(instance.template_id)
+            template_cache_key = f'_subject_template_{str(instance.template_id)}'
             template = getattr(self, template_cache_key, None)
             if template is None:
                 # cache compiled template to speed up rendering of list view

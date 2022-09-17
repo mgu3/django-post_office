@@ -40,15 +40,14 @@ def get_email_template(name, language=''):
         use_cache = getattr(settings, 'POST_OFFICE_TEMPLATE_CACHE', True)
     if not use_cache:
         return EmailTemplate.objects.get(name=name, language=language)
-    else:
-        composite_name = '%s:%s' % (name, language)
-        email_template = cache.get(composite_name)
+    composite_name = f'{name}:{language}'
+    email_template = cache.get(composite_name)
 
-        if email_template is None:
-            email_template = EmailTemplate.objects.get(name=name, language=language)
-            cache.set(composite_name, email_template)
+    if email_template is None:
+        email_template = EmailTemplate.objects.get(name=name, language=language)
+        cache.set(composite_name, email_template)
 
-        return email_template
+    return email_template
 
 
 def split_emails(emails, split_count=1):
@@ -113,8 +112,10 @@ def parse_priority(priority):
         priority = getattr(PRIORITY, priority, None)
 
         if priority is None:
-            raise ValueError('Invalid priority, must be one of: %s' %
-                             ', '.join(PRIORITY._fields))
+            raise ValueError(
+                f"Invalid priority, must be one of: {', '.join(PRIORITY._fields)}"
+            )
+
     return priority
 
 
@@ -135,7 +136,7 @@ def parse_emails(emails):
         try:
             validate_email_with_name(email)
         except ValidationError:
-            raise ValidationError('%s is not a valid email address' % email)
+            raise ValidationError(f'{email} is not a valid email address')
 
     return emails
 

@@ -86,16 +86,13 @@ class Email(models.Model):
         self._cached_email_message = None
 
     def __str__(self):
-        return '%s' % self.to
+        return f'{self.to}'
 
     def email_message(self):
         """
         Returns Django EmailMessage object for sending.
         """
-        if self._cached_email_message:
-            return self._cached_email_message
-
-        return self.prepare_email_message()
+        return self._cached_email_message or self.prepare_email_message()
 
     def prepare_email_message(self):
         """
@@ -122,9 +119,9 @@ class Email(models.Model):
         if isinstance(self.headers, dict) or self.expires_at or self.message_id:
             headers = dict(self.headers or {})
             if self.expires_at:
-                headers.update({'Expires': self.expires_at.strftime("%a, %-d %b %H:%M:%S %z")})
+                headers['Expires'] = self.expires_at.strftime("%a, %-d %b %H:%M:%S %z")
             if self.message_id:
-                headers.update({'Message-ID': self.message_id})
+                headers['Message-ID'] = self.message_id
         else:
             headers = None
 
@@ -201,14 +198,14 @@ class Email(models.Model):
 
             # If log level is 0, log nothing, 1 logs only sending failures
             # and 2 means log both successes and failures
-            if log_level == 1:
-                if status == STATUS.failed:
-                    self.logs.create(status=status, message=message,
-                                     exception_type=exception_type)
-            elif log_level == 2:
+            if (
+                log_level == 1
+                and status == STATUS.failed
+                or log_level != 1
+                and log_level == 2
+            ):
                 self.logs.create(status=status, message=message,
                                  exception_type=exception_type)
-
         return status
 
     def clean(self):
@@ -280,7 +277,7 @@ class EmailTemplate(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return '%s %s' % (self.name, self.language)
+        return f'{self.name} {self.language}'
 
     def natural_key(self):
         return (self.name, self.language, self.default_template)
