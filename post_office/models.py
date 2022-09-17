@@ -3,6 +3,7 @@ import os
 from collections import namedtuple
 from uuid import uuid4
 from email.mime.nonmultipart import MIMENonMultipart
+# Cobalt Change
 from html import unescape
 
 from django.core.exceptions import ValidationError
@@ -108,6 +109,7 @@ class Email(models.Model):
 
         if self.template is not None:
             engine = get_template_engine()
+            # Cobalt Change
             subject = unescape(engine.from_string(self.template.subject).render(self.context))
             plaintext_message = engine.from_string(self.template.content).render(self.context)
             multipart_template = engine.from_string(self.template.html_content)
