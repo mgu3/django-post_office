@@ -3,6 +3,7 @@ import os
 from collections import namedtuple
 from uuid import uuid4
 from email.mime.nonmultipart import MIMENonMultipart
+from html import unescape
 
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -107,7 +108,7 @@ class Email(models.Model):
 
         if self.template is not None:
             engine = get_template_engine()
-            subject = engine.from_string(self.template.subject).render(self.context)
+            subject = unescape(engine.from_string(self.template.subject).render(self.context))
             plaintext_message = engine.from_string(self.template.content).render(self.context)
             multipart_template = engine.from_string(self.template.html_content)
             html_message = multipart_template.render(self.context)
