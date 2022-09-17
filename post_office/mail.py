@@ -104,17 +104,17 @@ def send(recipients=None, sender=None, template=None, context=None, subject='',
     try:
         recipients = parse_emails(recipients)
     except ValidationError as e:
-        raise ValidationError('recipients: %s' % e.message)
+        raise ValidationError(f'recipients: {e.message}')
 
     try:
         cc = parse_emails(cc)
     except ValidationError as e:
-        raise ValidationError('c: %s' % e.message)
+        raise ValidationError(f'c: {e.message}')
 
     try:
         bcc = parse_emails(bcc)
     except ValidationError as e:
-        raise ValidationError('bcc: %s' % e.message)
+        raise ValidationError(f'bcc: {e.message}')
 
     if sender is None:
         sender = settings.DEFAULT_FROM_EMAIL
@@ -148,7 +148,7 @@ def send(recipients=None, sender=None, template=None, context=None, subject='',
             template = get_email_template(template, language)
 
     if backend and backend not in get_available_backends().keys():
-        raise ValueError('%s is not a valid backend alias' % backend)
+        raise ValueError(f'{backend} is not a valid backend alias')
 
     email = create(sender, recipients, cc, bcc, subject, message, html_message,
                    context, scheduled_time, expires_at, headers, template, priority,
@@ -171,8 +171,7 @@ def send_many(kwargs_list):
     Internally, it uses Django's bulk_create command for efficiency reasons.
     Currently send_many() can't be used to send emails with priority = 'now'.
     """
-    emails = [send(commit=False, **kwargs) for kwargs in kwargs_list]
-    if emails:
+    if emails := [send(commit=False, **kwargs) for kwargs in kwargs_list]:
         Email.objects.bulk_create(emails)
         email_queued.send(sender=Email, emails=emails)
 
@@ -203,8 +202,10 @@ def send_queued(processes=1, log_level=None):
     total_sent, total_failed, total_requeued = 0, 0, 0
     total_email = len(queued_emails)
 
-    logger.info('Started sending %s emails with %s processes.' %
-                (total_email, processes))
+    logger.info(
+        f'Started sending {total_email} emails with {processes} processes.'
+    )
+
 
     if log_level is None:
         log_level = get_log_level()
@@ -253,7 +254,7 @@ def _send_bulk(emails, uses_multiprocessing=True, log_level=None):
     failed_emails = []  # This is a list of two tuples (email, exception)
     email_count = len(emails)
 
-    logger.info('Process started, sending %s emails' % email_count)
+    logger.info(f'Process started, sending {email_count} emails')
 
     def send(email):
         try:

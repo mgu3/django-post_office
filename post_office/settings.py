@@ -27,12 +27,7 @@ def get_available_backends():
     if backends:
         return backends
 
-    # Try to get backend settings from old style
-    # POST_OFFICE = {
-    #     'EMAIL_BACKEND': 'mybackend'
-    # }
-    backend = get_config().get('EMAIL_BACKEND')
-    if backend:
+    if backend := get_config().get('EMAIL_BACKEND'):
         warnings.warn('Please use the new POST_OFFICE["BACKENDS"] settings',
                       DeprecationWarning)
 
@@ -56,12 +51,11 @@ def get_cache_backend():
     if hasattr(settings, 'CACHES'):
         if "post_office" in settings.CACHES:
             return caches["post_office"]
-        else:
-            # Sometimes this raises InvalidCacheBackendError, which is ok too
-            try:
-                return caches["default"]
-            except InvalidCacheBackendError:
-                pass
+        # Sometimes this raises InvalidCacheBackendError, which is ok too
+        try:
+            return caches["default"]
+        except InvalidCacheBackendError:
+            pass
     return None
 
 

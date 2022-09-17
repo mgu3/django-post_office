@@ -73,7 +73,7 @@ class MailTest(TestCase):
 
         # All three emails should be sent
         self.assertEqual(Email.objects.filter(status=STATUS.sent).count(), 0)
-        for i in range(3):
+        for _ in range(3):
             Email.objects.create(**kwargs)
         total_sent, total_failed, total_requeued = send_queued(processes=2)
         self.assertEqual(total_sent, 3)

@@ -164,7 +164,7 @@ class EmailAdminTest(TestCase):
         try:
             import bleach
             self.assertContains(response, "<h3>Testing image attachments</h3>")
-            self.assertContains(response, '<img src="{}" width="200"'.format(email_image_url))
+            self.assertContains(response, f'<img src="{email_image_url}" width="200"')
         except ImportError:
             self.assertContains(response, "Testing image attachments")
 
