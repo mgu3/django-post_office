@@ -1,4 +1,10 @@
-# Django Post Office
+# Fork of Django Post Office
+
+## Reason
+We needed to edit models.py to add:
+
+- top: from html import unescape
+- line 113: subject = unescape(engine.from_string(self.template.subject).render(self.context))
 
 Django Post Office is a simple app to send and manage your emails in
 Django. Some awesome features are:
