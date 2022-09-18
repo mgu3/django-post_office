@@ -1,4 +1,4 @@
-# Fork of Django Post Office
+# Fork of Django Post Office 3.6.1
 
 ## Reason
 We needed to edit models.py to add:
